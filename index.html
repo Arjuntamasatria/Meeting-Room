@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebRTC Video Call — Jaringan Multimedia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=6" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       HOME SCREEN
+  ═══════════════════════════════════════════ -->
+  <div id="join-screen" class="screen active">
+
+    <!-- Top bar -->
+    <header class="home-topbar">
+      <button class="topbar-icon-btn" title="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+        </svg>
+      </button>
+      <div class="home-topbar-right">
+        <button class="topbar-icon-btn" title="Pengaturan">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zm-7.43 2.52c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+          </svg>
+        </button>
+        <button id="auth-login-btn" class="topbar-auth-btn">Masuk</button>
+        <div id="auth-user-box" class="auth-user-box hidden">
+          <div class="user-avatar-circle" id="auth-avatar" title="Profil">K</div>
+          <span id="auth-user-name" class="auth-user-name"></span>
+          <button id="auth-logout-btn" class="auth-logout-btn">Keluar</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main class="home-main">
+      <div class="home-center">
+
+        <!-- Actions row -->
+        <div class="home-actions-row">
+
+          <!-- "New meeting" dropdown button -->
+          <div class="nm-dropdown-wrap" id="nm-dropdown-wrap">
+            <button id="create-room-btn" class="btn-new-meeting" type="button" aria-haspopup="true" aria-expanded="false">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+              </svg>
+              <span>Rapat Baru</span>
+              <svg class="nm-chevron" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7 10l5 5 5-5z"/>
+              </svg>
+            </button>
+
+            <div class="nm-menu hidden" id="nm-menu" role="menu">
+              <button class="nm-item" id="nm-btn-instant" type="button" role="menuitem">
+                <div class="nm-item-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+                  </svg>
+                </div>
+                <div class="nm-item-text">
+                  <span class="nm-item-title">Mulai sekarang</span>
+                  <span class="nm-item-desc">Buat room instan &amp; dapatkan link</span>
+                </div>
+              </button>
+
+              <div class="nm-divider"></div>
+
+              <button class="nm-item" id="nm-btn-scheduled" type="button" role="menuitem">
+                <div class="nm-item-icon nm-item-icon--green">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+                  </svg>
+                </div>
+                <div class="nm-item-text">
+                  <span class="nm-item-title">Jadwalkan Meeting</span>
+                  <span class="nm-item-desc">Atur &amp; jadwalkan meeting</span>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <div class="home-vdivider"></div>
+
+          <!-- Room code input -->
+          <div class="join-code-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9aa0a6" stroke-width="2" stroke-linecap="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input
+              id="room-id-input"
+              type="text"
+              placeholder="Masukkan kode atau link"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </div>
+
+          <!-- Join button -->
+          <button class="btn-join-text" id="join-text-btn">Gabung</button>
+        </div>
+
+        <!-- Your name -->
+        <div class="home-name-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#9aa0a6">
+            <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+          </svg>
+          <input
+            id="username-input"
+            type="text"
+            class="home-name-input"
+            placeholder="Nama Anda (opsional)"
+            autocomplete="off"
+          />
+        </div>
+
+        <!-- Room link card (hidden until 'New meeting' creates a room) -->
+        <div id="room-link-card" class="room-link-card hidden">
+          <div class="rlc-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#34a853">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+            </svg>
+            <span>Room siap — bagikan link untuk mengundang</span>
+          </div>
+          <div class="rlc-link-row">
+            <input id="rlc-link-input" class="rlc-link-input" readonly />
+            <button id="btn-copy-link" class="btn-copy-link">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+              </svg>
+              <span>Salin</span>
+            </button>
+          </div>
+          <p class="rlc-code-hint">
+            Kode: <strong id="rlc-code-display"></strong>
+          </p>
+        </div>
+
+        <div class="home-content-divider hidden" id="home-content-divider"></div>
+
+        <!-- Meetings Section (shown via dropdown) -->
+        <div class="meetings-section hidden" id="meetings-section">
+          <div class="meetings-section-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#5f6368">
+              <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+            </svg>
+            <span class="meetings-section-title">Jadwalkan Meeting</span>
+            <button id="btn-toggle-schedule" class="btn-schedule-toggle">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+              </svg>
+              <span>Jadwalkan</span>
+            </button>
+          </div>
+
+          <!-- Schedule Form (hidden by default) -->
+          <div id="schedule-form" class="schedule-form hidden">
+            <div class="sf-field">
+              <label class="sf-label" for="sf-title">Judul meeting</label>
+              <input id="sf-title" type="text" class="sf-input" placeholder="Contoh: Diskusi Kelompok 3" />
+            </div>
+            <div class="sf-field">
+              <label class="sf-label" for="sf-host">Nama host</label>
+              <input id="sf-host" type="text" class="sf-input" placeholder="Nama Anda" />
+            </div>
+            <div class="sf-field">
+              <label class="sf-label" for="sf-datetime">Tanggal &amp; waktu</label>
+              <input id="sf-datetime" type="datetime-local" class="sf-input" />
+            </div>
+            <div class="sf-actions">
+              <button id="btn-cancel-schedule" class="btn-sf-cancel">Batal</button>
+              <button id="btn-submit-schedule" class="btn-sf-submit">Jadwalkan</button>
+            </div>
+          </div>
+
+          <!-- Meeting List -->
+          <div id="meetings-list" class="meetings-list">
+            <p class="meetings-empty" id="meetings-empty">Belum ada meeting terjadwal</p>
+          </div>
+        </div>
+
+        <p id="join-error" class="join-error-msg hidden"></p>
+      </div>
+    </main>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════
+       PREVIEW / LOBBY SCREEN (cek kamera & mik sebelum gabung)
+  ═══════════════════════════════════════════ -->
+  <div id="preview-screen" class="screen">
+    <div class="preview-container">
+
+      <!-- Preview kamera -->
+      <div class="preview-video-wrap">
+        <video id="preview-video" autoplay muted playsinline></video>
+        <div class="tile-cam-off hidden" id="preview-cam-off">
+          <div class="tile-avatar-circle"></div>
+          <span class="tile-cam-off-text">Kamera mati</span>
+        </div>
+
+        <!-- Tombol toggle di atas preview -->
+        <div class="preview-controls">
+          <button id="preview-toggle-audio" class="ctrl-btn active" title="Aktifkan/Matikan Mikrofon">
+            <svg class="icon-on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+            <svg class="icon-off hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="1" y1="1" x2="23" y2="23"/>
+              <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/>
+              <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/>
+              <line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+          </button>
+          <button id="preview-toggle-video" class="ctrl-btn active" title="Aktifkan/Matikan Kamera">
+            <svg class="icon-on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <polygon points="23 7 16 12 23 17 23 7"/>
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+            </svg>
+            <svg class="icon-off hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2m5.66 0H14a2 2 0 0 1 2 2v3.34l1 1L23 7v10"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Info & tombol gabung -->
+      <div class="preview-info">
+        <h2 class="preview-title">Siap bergabung?</h2>
+        <p class="preview-room">Kode room: <strong id="preview-room-code"></strong></p>
+        <input id="preview-name-input" class="preview-name-input" type="text" placeholder="Nama Anda" autocomplete="off" />
+        <button id="preview-join-btn" class="preview-join-btn">Gabung sekarang</button>
+        <button id="preview-back-btn" class="preview-back-btn">Kembali</button>
+        <p class="preview-hint">Periksa kamera &amp; mikrofon Anda sebelum bergabung.</p>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════
+       CALL SCREEN
+  ═══════════════════════════════════════════ -->
+  <div id="call-screen" class="screen">
+
+    <!-- Subtle overlay info (top-left, non-intrusive) -->
+    <div class="call-info-bar">
+      <span id="call-timer" class="call-timer">00:00</span>
+      <span id="header-room-name" class="call-room-name"></span>
+      <span id="connection-badge" class="badge badge--connecting">
+        <span class="badge-dot"></span>
+        <span id="connection-label">Menghubungkan…</span>
+      </span>
+    </div>
+
+    <!-- Video Grid -->
+    <main class="video-grid" id="video-grid">
+
+      <!-- Local tile -->
+      <div class="video-tile local-tile" id="local-tile">
+        <div class="tile-cam-off" id="local-cam-off">
+          <div class="tile-avatar-circle"></div>
+          <span class="tile-cam-off-text">Kamera mati</span>
+          <!-- Indikator mute saat kamera mati: tampil tepat di bawah teks "Kamera mati" -->
+          <div class="cam-off-mute-badge hidden" id="local-camoff-mute">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="1" y1="1" x2="23" y2="23"/>
+              <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/>
+              <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/>
+              <line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+            <span>Mikrofon dimatikan</span>
+          </div>
+        </div>
+        <video id="local-video" autoplay muted playsinline></video>
+        <div class="tile-label">
+          <span class="tile-you-badge">Kamu</span>
+          <span id="local-username-label">—</span>
+        </div>
+        <!-- Indikator mute saat kamera menyala: badge kecil di pojok kanan atas (tidak menabrak timer di kiri) -->
+        <div class="tile-muted-overlay hidden" id="local-muted-overlay">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="1" y1="1" x2="23" y2="23"/>
+            <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/>
+            <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/>
+            <line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Remote tiles (appended dynamically by webrtc-client.js) -->
+      <div id="remote-tiles-container"></div>
+
+      <!-- Waiting placeholder -->
+      <div class="video-tile waiting-tile" id="waiting-tile">
+        <div class="tile-cam-off">
+          <div class="waiting-pulse"></div>
+          <span class="tile-cam-off-text">Menunggu peserta lain bergabung…</span>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Stats Panel -->
+    <aside class="stats-panel" id="stats-panel">
+      <div class="stats-header">
+        <span>Statistik Jaringan</span>
+        <button class="stats-close-btn" id="stats-close-btn" title="Tutup">✕</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-label">RTT</span>
+          <span class="stat-value" id="stat-rtt">—</span>
+          <span class="stat-unit">ms</span>
+          <span class="stat-target">Target: &lt; 150 ms</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Packet Loss</span>
+          <span class="stat-value" id="stat-loss">—</span>
+          <span class="stat-unit">%</span>
+          <span class="stat-target">Target: &lt; 1%</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Jitter</span>
+          <span class="stat-value" id="stat-jitter">—</span>
+          <span class="stat-unit">ms</span>
+          <span class="stat-target">Target: &lt; 30 ms</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Throughput</span>
+          <span class="stat-value" id="stat-throughput">—</span>
+          <span class="stat-unit">kbps</span>
+          <span class="stat-target">Target: &gt; 500 kbps</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Frame Rate</span>
+          <span class="stat-value" id="stat-fps">—</span>
+          <span class="stat-unit">fps</span>
+          <span class="stat-target">Target: &gt; 24 fps</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Resolusi</span>
+          <span class="stat-value" id="stat-res" style="font-size:0.82rem">—</span>
+          <span class="stat-unit">px</span>
+          <span class="stat-target">Target: ≥ 720p</span>
+        </div>
+      </div>
+      <div class="stats-log-section">
+        <div class="stats-log-header">
+          <span>Log</span>
+          <button id="export-log-btn" class="btn-export">Ekspor CSV</button>
+        </div>
+        <div id="stats-log" class="stats-log"></div>
+      </div>
+    </aside>
+
+    <!-- Chat Panel -->
+    <aside class="chat-panel" id="chat-panel">
+      <div class="chat-header">
+        <span>Chat dalam Rapat</span>
+        <button class="chat-close-btn" id="chat-close-btn" title="Tutup">✕</button>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <p class="chat-empty" id="chat-empty">Belum ada pesan. Mulai percakapan!</p>
+      </div>
+      <div class="chat-input-row">
+        <input id="chat-input" class="chat-input" type="text" placeholder="Ketik pesan…" maxlength="1000" autocomplete="off" />
+        <button id="chat-send-btn" class="chat-send-btn" title="Kirim">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Controls Bar -->
+    <footer class="controls-bar">
+
+      <!-- Stats toggle -->
+      <button id="btn-toggle-stats" class="ctrl-btn" title="Statistik Jaringan">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+      </button>
+
+      <!-- Chat toggle -->
+      <button id="btn-toggle-chat" class="ctrl-btn" title="Chat">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <span class="chat-badge hidden" id="chat-badge">0</span>
+      </button>
+
+      <!-- Microphone -->
+      <button id="btn-toggle-audio" class="ctrl-btn active" title="Aktifkan/Matikan Mikrofon">
+        <svg class="icon-on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+        <svg class="icon-off hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="1" y1="1" x2="23" y2="23"/>
+          <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/>
+          <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/>
+          <line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+      </button>
+
+      <!-- Camera -->
+      <button id="btn-toggle-video" class="ctrl-btn active" title="Aktifkan/Matikan Kamera">
+        <svg class="icon-on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <polygon points="23 7 16 12 23 17 23 7"/>
+          <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+        </svg>
+        <svg class="icon-off hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2m5.66 0H14a2 2 0 0 1 2 2v3.34l1 1L23 7v10"/>
+          <line x1="1" y1="1" x2="23" y2="23"/>
+        </svg>
+      </button>
+
+      <!-- End call -->
+      <button id="btn-hangup" class="ctrl-btn ctrl-btn--danger" title="Akhiri Panggilan">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.12-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
+        </svg>
+      </button>
+
+    </footer>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       AUTH MODAL (Sign Up / Log In) — opsional
+  ═══════════════════════════════════════════ -->
+  <div id="auth-modal" class="auth-modal hidden">
+    <div class="auth-modal-card">
+      <button class="auth-modal-close" id="auth-modal-close" title="Tutup">✕</button>
+      <h2 class="auth-modal-title">Akun</h2>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="auth-tab-login" type="button">Masuk</button>
+        <button class="auth-tab" id="auth-tab-signup" type="button">Daftar</button>
+      </div>
+
+      <div class="auth-field hidden" id="auth-name-field">
+        <label for="auth-name">Nama</label>
+        <input id="auth-name" type="text" placeholder="Nama Anda" autocomplete="name" />
+      </div>
+      <div class="auth-field">
+        <label for="auth-email">Email</label>
+        <input id="auth-email" type="email" placeholder="email@contoh.com" autocomplete="email" />
+      </div>
+      <div class="auth-field">
+        <label for="auth-password">Password</label>
+        <input id="auth-password" type="password" placeholder="••••••" autocomplete="current-password" />
+      </div>
+
+      <p class="auth-error hidden" id="auth-error"></p>
+      <button class="auth-submit" id="auth-submit" type="button">Masuk</button>
+
+      <p class="auth-hint">
+        Akun bersifat <strong>opsional</strong> — Anda tetap bisa meeting tanpa akun.
+        Login membuat meeting terjadwal Anda <strong>hanya bisa dihapus oleh Anda</strong>.
+      </p>
+    </div>
+  </div>
+
+  <!-- Toast container (overlay, outside all screens) -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="webrtc-client.js?v=7"></script>
+  <script src="auth-client.js?v=7"></script>
+</body>
+</html>

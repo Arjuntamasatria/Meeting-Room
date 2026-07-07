@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Database SQLite (berisi email + hash password user) — jangan di-commit
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Environment & kredensial
+.env
+.env.*
+
+# Log & file sementara
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ngrok
+ngrok.exe
